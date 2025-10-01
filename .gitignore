@@ -68,3 +68,5 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+
+my-sentiment-model/
