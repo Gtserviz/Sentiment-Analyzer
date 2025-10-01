@@ -9,3 +9,4 @@ accelerate>=0.26.0
 huggingface_hub
 datasets
 packaging
+hf_xet

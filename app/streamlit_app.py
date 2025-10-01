@@ -1,30 +1,13 @@
 import streamlit as st
-import sys
 import time
+import torch
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from pathlib import Path
+import json
 
-# ===== SETUP =====
-def setup_paths():
-    current_file = Path(__file__).resolve()
-    project_root = current_file.parent.parent
-    src_path = project_root / "src"
-    
-    if str(src_path) not in sys.path:
-        sys.path.insert(0, str(src_path))
-    
-    return project_root
-
-project_root = setup_paths()
-
-# ===== IMPORTS =====
-try:
-    from models.sentiment_predictor import SentimentPredictor
-    from models.emoji_predictor import EmojiPredictor
-    sentiment_available = True
-    emoji_available = True
-except ImportError as e:
-    st.error(f"Import error: {e}")
-    st.stop()
+# ===== CONFIGURATION =====
+# Replace with your actual Hugging Face model repository
+HUGGINGFACE_MODEL_REPO = "Arskye/my-sentiment-model"
 
 # ===== HELPER FUNCTIONS =====
 def get_sentiment_color(sentiment: str) -> str:
@@ -49,7 +32,7 @@ def create_sentiment_chart(probabilities):
             height=400
         )
         return fig
-    except:
+    except Exception:
         return None
 
 def display_emoji_grid(emojis):
@@ -68,41 +51,129 @@ def display_emoji_grid(emojis):
                 </div>
             """, unsafe_allow_html=True)
 
+# ===== EMOJI PREDICTOR =====
+class SimpleEmojiPredictor:
+    def __init__(self):
+        self.sentiment_emojis = {
+            'positive': [
+                {'emoji': '😊', 'confidence': 0.95},
+                {'emoji': '😃', 'confidence': 0.92},
+                {'emoji': '🥰', 'confidence': 0.90},
+                {'emoji': '😍', 'confidence': 0.88},
+                {'emoji': '🤗', 'confidence': 0.85}
+            ],
+            'negative': [
+                {'emoji': '😢', 'confidence': 0.95},
+                {'emoji': '😞', 'confidence': 0.92},
+                {'emoji': '😔', 'confidence': 0.90},
+                {'emoji': '💔', 'confidence': 0.93},
+                {'emoji': '😤', 'confidence': 0.88}
+            ],
+            'neutral': [
+                {'emoji': '😐', 'confidence': 0.95},
+                {'emoji': '🤔', 'confidence': 0.93},
+                {'emoji': '😑', 'confidence': 0.90},
+                {'emoji': '🙄', 'confidence': 0.85},
+                {'emoji': '😶', 'confidence': 0.88}
+            ]
+        }
+    
+    def predict_emojis(self, text, sentiment_result, max_emojis=5):
+        sentiment = sentiment_result['label']
+        confidence = sentiment_result['confidence']
+        
+        emojis = self.sentiment_emojis.get(sentiment, [])
+        # Adjust confidence scores
+        adjusted_emojis = []
+        for emoji_data in emojis[:max_emojis]:
+            adjusted_emojis.append({
+                'emoji': emoji_data['emoji'],
+                'confidence': emoji_data['confidence'] * confidence
+            })
+        return adjusted_emojis
+    
+    def is_loaded(self):
+        return True
+
 # ===== MODEL LOADING =====
 @st.cache_resource
 def load_models():
-    model_path = project_root / "data" / "models" / "sentiment"
-    
-    # For GitHub deployment, load model from Hugging Face Hub
+    """Load models from Hugging Face Hub"""
     try:
-        predictor = SentimentPredictor(str(model_path))
-        if predictor.load_model():
-            emoji_predictor = EmojiPredictor(project_root / "data" / "processed")
-            emoji_predictor.load_emoji_data()
-            return predictor, emoji_predictor
-    except:
-        st.error("⚠️ Model not found locally. Please train the model first.")
-        return None, None
+        with st.spinner("Loading model from Hugging Face Hub..."):
+            tokenizer = AutoTokenizer.from_pretrained(HUGGINGFACE_MODEL_REPO)
+            model = AutoModelForSequenceClassification.from_pretrained(HUGGINGFACE_MODEL_REPO)
+            
+            # Move to appropriate device
+            device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            model.to(device)
+            
+            # Initialize emoji predictor
+            emoji_predictor = SimpleEmojiPredictor()
+            
+            return tokenizer, model, device, emoji_predictor
+    except Exception as e:
+        st.error(f"❌ Failed to load model from Hugging Face Hub: {str(e)}")
+        st.info("Please make sure you've uploaded your model to Hugging Face Hub and updated the HUGGINGFACE_MODEL_REPO variable.")
+        return None, None, None, None
+
+def predict_sentiment(tokenizer, model, device, text):
+    """Predict sentiment for given text"""
+    inputs = tokenizer(
+        text,
+        return_tensors="pt",
+        truncation=True,
+        padding=True,
+        max_length=128
+    ).to(device)
     
-    return None, None
+    with torch.no_grad():
+        outputs = model(**inputs)
+        probabilities = torch.nn.functional.softmax(outputs.logits, dim=-1)
+        predicted_class = torch.argmax(probabilities, dim=-1).item()
+    
+    # Get label mapping from model config
+    labels = model.config.id2label or {0: "negative", 1: "neutral", 2: "positive"}
+    
+    # Create result dictionary
+    result = {
+        'label': labels[predicted_class],
+        'confidence': probabilities[0][predicted_class].item(),
+        'probabilities': {
+            labels[i]: probabilities[0][i].item() 
+            for i in range(len(labels))
+        }
+    }
+    
+    return result
 
 # ===== MAIN APP =====
 def main():
-    st.set_page_config(page_title="AI Sentiment Analyzer", page_icon="🎭", layout="wide")
+    st.set_page_config(
+        page_title="AI Sentiment Analyzer", 
+        page_icon="🎭", 
+        layout="wide"
+    )
     
     # Load models
-    sentiment_predictor, emoji_predictor = load_models()
+    tokenizer, model, device, emoji_predictor = load_models()
     
     # Sidebar
     st.sidebar.header("🏥 Model Status")
-    if sentiment_predictor:
-        st.sidebar.success("✅ Model Loaded")
-        info = sentiment_predictor.get_model_info()
-        st.sidebar.write(f"**Device:** {info.get('device_type', 'CPU')}")
-        st.sidebar.write(f"**Parameters:** {info.get('num_parameters', 0):,}")
+    if model is not None:
+        st.sidebar.success("✅ Model Loaded from Hugging Face Hub")
+        st.sidebar.write(f"**Device:** {device}")
+        st.sidebar.write(f"**Model:** {HUGGINGFACE_MODEL_REPO}")
+        
+        # Model info
+        try:
+            num_params = sum(p.numel() for p in model.parameters())
+            st.sidebar.write(f"**Parameters:** {num_params:,}")
+        except:
+            pass
     else:
         st.sidebar.error("❌ Model Not Loaded")
-        st.sidebar.info("Run training script to create model files")
+        st.sidebar.info("Check Hugging Face Hub connection")
     
     # Header
     st.markdown("""
@@ -111,16 +182,14 @@ def main():
                 🎭 AI Sentiment Analyzer
             </h1>
             <p style="font-size: 1.2rem; color: #666;">
-                Powered by DistilBERT with Smart Emoji Predictions
+                Powered by Fine-tuned DistilBERT from Hugging Face Hub
             </p>
         </div>
     """, unsafe_allow_html=True)
     
-    if not sentiment_predictor:
+    if model is None:
         st.error("❌ Cannot proceed without loaded model")
-        st.info("**Setup Instructions:**")
-        st.code("1. Run: python src/training/train_distilbert.py")
-        st.code("2. Restart the app")
+        st.info(f"**Please ensure your model is uploaded to:** {HUGGINGFACE_MODEL_REPO}")
         return
     
     # Input Section
@@ -137,15 +206,16 @@ def main():
         if not user_text.strip():
             st.warning("⚠️ Please enter some text!")
         else:
-            analyze_text(user_text, sentiment_predictor, emoji_predictor)
+            analyze_text(user_text, tokenizer, model, device, emoji_predictor)
 
-def analyze_text(text, sentiment_predictor, emoji_predictor):
+def analyze_text(text, tokenizer, model, device, emoji_predictor):
+    """Analyze text and display results"""
     with st.spinner("Analyzing..."):
         try:
             start_time = time.time()
-            result = sentiment_predictor.predict(text)
+            result = predict_sentiment(tokenizer, model, device, text)
             
-            # Get emojis if available
+            # Get emojis
             emojis = []
             if emoji_predictor and emoji_predictor.is_loaded():
                 emojis = emoji_predictor.predict_emojis(text, result, max_emojis=5)
