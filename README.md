@@ -2,6 +2,12 @@
 
 A modern sentiment analysis application powered by DistilBERT with smart emoji predictions.
 
+---
+
+## 🚀 Live Demo
+
+Try the live application: [[Click Here](https://arskye-sentiment-analyzer.streamlit.app/)]
+
 ## Features
 
 - **3-Class Sentiment Analysis**: Positive, Negative, Neutral
