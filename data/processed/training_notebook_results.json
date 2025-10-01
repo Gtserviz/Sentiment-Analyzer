@@ -1,0 +1,10 @@
+{
+  "model_loaded": true,
+  "test_samples_evaluated": 5,
+  "device_used": "cpu",
+  "accuracy": 0.8,
+  "f1_macro": 0.6,
+  "f1_weighted": 0.72,
+  "total_errors": 1,
+  "error_rate": 0.2
+}

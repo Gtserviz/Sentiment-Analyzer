@@ -1,0 +1,17 @@
+{
+  "total_samples": 70000,
+  "train_samples": 49000,
+  "val_samples": 10500,
+  "test_samples": 10500,
+  "class_distribution": {
+    "negative": 30000,
+    "positive": 30000,
+    "neutral": 10000
+  },
+  "source_distribution": {
+    "sentiment140": 39215,
+    "imdb": 19639,
+    "generated": 10000,
+    "amazon": 1146
+  }
+}
