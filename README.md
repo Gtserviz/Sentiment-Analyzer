@@ -1,6 +1,25 @@
-# 🎭 AI Sentiment Analyzer
+<div align="center">
+  <h1 align="center">SENTIMENT-ANALYZER</h1>
+  <h3><em>Real-Time Sentiment Classification with Emoji Recommendations</em></h3>
+  
+  ![Last Commit](https://img.shields.io/github/last-commit/Abhay-Rudatala/Sentiment-Analyzer?label=last%20commit&color=blue)
+  ![Python](https://img.shields.io/badge/python-100.0%25-blue)
+  ![Languages](https://img.shields.io/badge/languages-1-green)
 
-A modern sentiment analysis application powered by DistilBERT with smart emoji predictions.
+  <br>
+  
+  <h4><strong>Built with the tools and technologies:</strong></h4>
+
+  ![Markdown](https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor=white)
+  ![Streamlit](https://img.shields.io/badge/streamlit-%23FE4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white)
+  ![transformers](https://img.shields.io/badge/transformers-%23FF6F61.svg?style=for-the-badge&logo=transformers&logoColor=white)
+  ![PyTorch](https://img.shields.io/badge/pytorch-%23EE4C2C.svg?style=for-the-badge&logo=pytorch&logoColor=white)
+
+  ![HuggingFace](https://img.shields.io/badge/huggingface-%23FF6F00.svg?style=for-the-badge&logo=huggingface&logoColor=white)
+  ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+  ![Plotly](https://img.shields.io/badge/plotly-%233F4F75.svg?style=for-the-badge&logo=plotly&logoColor=white)
+  ![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white)
+</div>
 
 ---
 
