@@ -7,7 +7,7 @@ import json
 
 # ===== CONFIGURATION =====
 # Replace with your actual Hugging Face model repository
-HUGGINGFACE_MODEL_REPO = "Arskye/my-sentiment-model"
+HUGGINGFACE_MODEL_REPO = "Arskye/Sentiment-Model"
 
 # ===== HELPER FUNCTIONS =====
 def get_sentiment_color(sentiment: str) -> str:
